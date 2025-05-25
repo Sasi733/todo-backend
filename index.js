@@ -1,5 +1,3 @@
-// index.js
-
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -8,10 +6,22 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// ✅ Allow both frontend domains (old and new)
+const allowedOrigins = [
+  "https://sasitaskremainder.vercel.app",
+  "https://sasiiiiiiitaskremainder.vercel.app"
+];
+
+// ✅ Updated CORS middleware
 app.use(
   cors({
-    origin: "https://sasitaskremainder.vercel.app",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PATCH", "DELETE"],
     credentials: true,
   })
