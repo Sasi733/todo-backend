@@ -12,20 +12,25 @@ const allowedOrigins = [
   "https://sasiiiiiiitaskremainder.vercel.app"
 ];
 
-// ✅ Updated CORS middleware
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST", "PATCH", "DELETE"],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"], // ✅ include OPTIONS
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  optionsSuccessStatus: 204, // ✅ legacy browser support
+};
+
+// ✅ CORS Middleware
+app.use(cors(corsOptions));
+
+// ✅ Preflight handler
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
